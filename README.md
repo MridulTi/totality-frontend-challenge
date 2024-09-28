@@ -1,36 +1,83 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+
+# Property Rental Platform (LAND ME)
+
+This project is a property rental platform developed using Next.js. It allows users to browse property listings, add properties to their cart, and manage bookings. The application combines coding, UI design, logical thinking, user interaction, and critical problem-solving skills.
+
+## Features
+
+- **Dynamic Property Listings**: Users can view detailed information about properties on dynamic pages.
+- **User Management**: Each user has a unique account to manage their bookings and cart.
+- **Shopping Cart**: Users can add properties to their cart for later booking.
+- **Order Management**: Upon booking, properties are moved from the cart to the orders model.
+
+## Models
+
+The application uses the following models:
+
+1. **Property**: Contains information about the properties, including:
+   - Property ID
+   - Name
+   - Description
+   - Price
+   - Location
+   - Images
+
+2. **User**: Represents a user in the system, with fields like:
+   - User ID
+   - Name
+   - Email
+   - Password (hashed)
+
+3. **Cart**: Maintains the list of properties that a user has added to their cart:
+   - Cart ID
+   - User ID (foreign key)
+   - List of Product IDs (references to Property)
+
+4. **Orders**: Keeps track of the properties that have been booked:
+   - Order ID
+   - User ID (foreign key)
+   - List of Product IDs (references to Property)
+
+## How It Works
+
+1. **Viewing Properties**: When a user clicks on a property, they are directed to a dynamic page that displays all relevant information about that property.
+   
+2. **Adding to Cart**: Users can add properties to their cart. This action creates an entry in the Cart model associated with the user ID and the list of product IDs.
+
+3. **Booking Properties**: When a user decides to book a property from their cart, the application deletes the properties from the Cart model and creates an entry in the Orders model, reflecting the completed transaction.
 
 ## Getting Started
 
-First, run the development server:
+To run this project locally, follow these steps:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/MridulTi/totality-frontend-challenge.git
+   cd property-rental-platform
+   ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Install Dependencies**:
+   Make sure you have [Node.js](https://nodejs.org/) installed. Then, run:
+   ```bash
+   npm install
+   ```
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+3. **Set Up Environment Variables**:
+   Create a `.env.local` file in the root directory and add your MongoDB connection string:
+   ```plaintext
+   MONGODB_URI=mongodb://your_username:your_password@your_host:your_port/
+   your_database
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+4. **Run the Development Server**:
+   Start the Next.js development server:
+   ```bash
+   npm run dev
+   ```
+   The application will be available at `http://localhost:3000`.
 
-## Learn More
+5. **Visit the Application**: Open your web browser and navigate to `http://localhost:3000` to start using the property rental platform.
 
-To learn more about Next.js, take a look at the following resources:
+## Conclusion
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+This project not only demonstrates the capabilities of Next.js for building dynamic web applications but also provides an excellent foundation for anyone interested in creating a property rental platform. Feel free to customize and extend the features as per your requirements!

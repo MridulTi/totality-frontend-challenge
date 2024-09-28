@@ -220,7 +220,7 @@ export const DashNav = () => {
           <IconButton
             color={`${pathname.includes("cart") ? "indigo" : ""}`}
             variant={`${pathname.includes("cart") ? "filled" : "text"}`}
-            className={`rounded-full ${pathname.includes("cart") ? "bg-indigo-600 text-white" : "text-gray-700 hover:text-black text-2xl"}`}
+            className={`rounded-full text-2xl ${pathname.includes("cart") ? "bg-indigo-600 text-white" : "text-gray-700 hover:text-black "}`}
           >
             <FaCartPlus />
           </IconButton>
