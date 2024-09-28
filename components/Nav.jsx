@@ -4,29 +4,127 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { signIn, signOut, useSession, getProviders } from "next-auth/react";
+import { useApp } from "@context/AppProviders";
+import { Avatar, Button, IconButton, Input, Menu, MenuHandler, MenuItem, MenuList } from "@material-tailwind/react";
+import { HiMenu } from "react-icons/hi";
+import { FaCartPlus, FaSearch } from "react-icons/fa";
+import { usePathname, useRouter } from "next/navigation";
+import axios from "axios";
+import Modals, { AddPropertyModal } from "./Modals";
 
-const Nav = () => {
-  const { data: session } = useSession();
+// export const Nav = () => {
+//   const { data: session } = useSession();
+//   const [providers, setProviders] = useState(null);
+//   const [toggleDropdown, setToggleDropdown] = useState(false);
 
-  const [providers, setProviders] = useState(null);
-  const [toggleDropdown, setToggleDropdown] = useState(false);
+//   useEffect(() => {
+//     const setProvider = async () => {
+//       const response = await getProviders();
+//       setProviders(response);
+//     };
 
-  useEffect(() => {
-    // (async () => {
-    //   const res = await getProviders();
-    //   setProviders(res);
-    // })();
-    const setProvider=async()=>{
-      const response=await getProviders();
-      setProviders(response)
-    }
+//     setProvider();
+//   }, []);
 
-    setProvider()
-  }, []);
+//   return (
+//     <nav className="fixed top-0 z-20 w-full bg-white shadow-md flex justify-between items-center px-6 py-3 sm:px-12 md:px-24 lg:px-64">
+//       {/* Logo */}
+//       <Link href="/" className="flex items-center gap-2">
+//         <p className="font-extrabold text-xl sm:text-2xl tracking-wider">LAND ME</p>
+//       </Link>
+
+//       {/* Desktop Navigation */}
+//       <div className="hidden sm:flex items-center gap-6">
+//         {session?.user ? (
+//           <div className="flex items-center gap-4">
+//             <Link href="/host-comp">
+//               <Button className="bg-black text-white hover:bg-gray-800">Create Post</Button>
+//             </Link>
+//             <Button onClick={signOut} variant="outlined" className="border-black hover:bg-black hover:text-white">
+//               Sign Out
+//             </Button>
+//             <Link href="/profile">
+//               <Avatar src={session?.user.image} alt="profile" size="sm" />
+//             </Link>
+//           </div>
+//         ) : (
+//           providers && (
+//             <div className="flex gap-4">
+//               {Object.values(providers).map((provider) => (
+//                 <Button
+//                   key={provider.name}
+//                   onClick={() => signIn(provider.id)}
+//                   className="p-2 px-6 rounded-full hover:bg-black hover:text-white"
+//                 >
+//                   Log In
+//                 </Button>
+//               ))}
+//               <Button className="bg-black text-white p-2 px-6 rounded-full font-semibold hover:bg-white hover:text-black">
+//                 Sign Up
+//               </Button>
+//             </div>
+//           )
+//         )}
+//       </div>
+
+//       {/* Mobile Navigation */}
+//       <div className="flex sm:hidden items-center">
+//         {session?.user ? (
+//           <>
+//             <IconButton onClick={() => setToggleDropdown((prev) => !prev)} className="p-0">
+//               <Avatar src={session?.user.image} alt="profile" size="sm" />
+//             </IconButton>
+//             {toggleDropdown && (
+//               <div className="absolute top-14 right-6 w-40 bg-white border rounded-md shadow-lg py-2 z-30">
+//                 <Link
+//                   href="/profile"
+//                   className="block px-4 py-2 hover:bg-gray-100"
+//                   onClick={() => setToggleDropdown(false)}
+//                 >
+//                   My Profile
+//                 </Link>
+//                 <Link
+//                   href="/create-prompt"
+//                   className="block px-4 py-2 hover:bg-gray-100"
+//                   onClick={() => setToggleDropdown(false)}
+//                 >
+//                   Create Prompt
+//                 </Link>
+//                 <Button
+//                   onClick={() => {
+//                     setToggleDropdown(false);
+//                     signOut();
+//                   }}
+//                   className="w-full mt-2 bg-black text-white hover:bg-gray-800"
+//                 >
+//                   Sign Out
+//                 </Button>
+//               </div>
+//             )}
+//           </>
+//         ) : (
+//           providers &&
+//           Object.values(providers).map((provider) => (
+//             <Button
+//               key={provider.name}
+//               onClick={() => signIn(provider.id)}
+//               className="bg-black text-white rounded-full px-4"
+//             >
+//               Sign in
+//             </Button>
+//           ))
+//         )}
+//       </div>
+//     </nav>
+//   );
+// };
+
+export const AuthNav = () => {
+  const { toggleAuthPage, AuthPage } = useApp();
 
   return (
-    <nav className='fixed top-0 flex justify-between w-screen mb-16 pt-3 px-12'>
-      <Link href='/' className='flex gap-2 flex-center'>
+    <nav className="z-10 bg-white shadow-md flex justify-between items-center w-full px-4 sm:px-8 md:px-16 lg:px-32 py-4">
+      <Link href='/' className='flex gap-2 items-center'>
         {/* <Image
           src='/assets/images/logo.svg'
           alt='logo'
@@ -34,122 +132,113 @@ const Nav = () => {
           height={30}
           className='object-contain'
         /> */}
-        <p className='font-extrabold text-white text-xl'>Compile-<b className="tracking-widest">CLASH</b></p>
+        <p className='font-extrabold text-xl sm:text-2xl tracking-wider'>LAND ME</p>
       </Link>
-
-      {/* Desktop Navigation */}
-      <div className='sm:flex hidden'>
-        {session?.user ? (
-          <div className='flex gap-3 md:gap-5'>
-            <Link href='/host-comp' className='bg-black p-2 text-white'>
-              Create Post
-            </Link>
-
-            <button type='button' onClick={signOut} className='outline outline-1 hover:bg-black hover:text-white outline-black p-2 px-4'>
-              Sign Out
-            </button>
-
-            <Link href='/profile'>
-              <Image
-                src={session?.user.image}
-                width={37}
-                height={37}
-                className='rounded-full'
-                alt='profile'
-              />
-            </Link>
-          </div>
+      <div className="text-sm sm:text-base">
+        {AuthPage === "login" ? (
+          <p>
+            Don't have an Account? 
+            <b onClick={() => toggleAuthPage("register")} className="cursor-pointer text-blue-500"> Sign up!</b>
+          </p>
         ) : (
-          <>
-            {providers &&
-              Object.values(providers).map((provider) => (
-                <div className="flex gap-4 items-center ">
-                <button
-                  type='button'
-                  key={provider.name}
-                  onClick={() => {
-                    signIn(provider.id);
-                  }}
-                  className='hover:bg-gray-700  p-2 px-6 rounded-lg font-semibold text-white'
-                >
-                  Log In
-                </button>
-                <button
-                  type='button'
-                  key={provider.name}
-                  
-                  className='bg-white p-2 hover:bg-black hover:text-white px-6 rounded-lg font-semibold'
-                >
-                  Sign Up
-                </button>
-                </div>
-              ))}
-          </>
-        )}
-      </div>
-
-      {/* Mobile Navigation */}
-      <div className='sm:hidden flex relative'>
-        {session?.user ? (
-          <div className='flex'>
-            <Image
-              src={session?.user.image}
-              width={37}
-              height={37}
-              className='rounded-full'
-              alt='profile'
-              onClick={() => setToggleDropdown((prev)=>!prev)}
-            />
-
-            {toggleDropdown && (
-              <div className='dropdown'>
-                <Link
-                  href='/profile'
-                  className='dropdown_link'
-                  onClick={() => setToggleDropdown(false)}
-                >
-                  My Profile
-                </Link>
-                <Link
-                  href='/create-prompt'
-                  className='dropdown_link'
-                  onClick={() => setToggleDropdown(false)}
-                >
-                  Create Prompt
-                </Link>
-                <button
-                  type='button'
-                  onClick={() => {
-                    setToggleDropdown(false);
-                    signOut();
-                  }}
-                  className='mt-5 w-full bg-black p-2 text-white'
-                >
-                  Sign Out
-                </button>
-              </div>
-            )}
-          </div>
-        ) : (
-          <>
-            {providers &&
-              Object.values(providers).map((provider) => (
-                <button
-                  type='button'
-                  key={provider.name}
-                  onClick={() => {
-                    signIn(provider.id);
-                  }}
-                  className='bg-black p-2 text-white'
-                >
-                  Sign in
-                </button>
-              ))}
-          </>
+          <p>
+            Already have an account? 
+            <b onClick={() => toggleAuthPage("login")} className="cursor-pointer text-blue-500"> Log In!</b>
+          </p>
         )}
       </div>
     </nav>
   );
-};
+}
 
-export default Nav;
+
+
+export const DashNav = () => {
+  const pathname = usePathname();
+  const { handleSearchList } = useApp();
+  const [modals, setModals] = useState(false);
+  const [searchInput, setSearchInput] = useState("");
+  const router = useRouter();
+
+  function handleLogout() {
+    axios.post("/api/auth/users/logout")
+      .then(() => router.push("/"))
+      .catch((err) => console.log(err));
+  }
+
+  function handleSearch() {
+    axios.get(`/api?query=${searchInput}`)
+      .then((res) => {
+        handleSearchList(res.data.data);
+        setSearchInput("");
+      })
+      .catch((err) => console.log(err));
+  }
+
+  function AddProperty() {
+    setModals((cur) => !cur);
+  }
+
+  return (
+    <nav className="fixed z-10 bg-white border-b-2 border-gray-100 w-full flex items-center justify-between py-2 px-6 sm:px-12 md:px-24 lg:px-64">
+      {/* Logo */}
+      <Link href="/dash" className="flex items-center gap-2">
+        <p className="font-extrabold text-xl sm:text-2xl tracking-wider">LAND ME</p>
+      </Link>
+
+      {/* Search Bar */}
+      <div className="flex justify-center sm:justify-start w-fit mt-3 sm:mt-0">
+        <div className="relative w-full px-4 py-2 rounded-full border-2 border-gray-200 shadow-sm">
+          <input
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            placeholder="Search for Properties"
+            className="outline-none "
+          />
+          <IconButton
+            onClick={handleSearch}
+            variant="text"
+            size="sm"
+            className="bg-indigo-400 rounded-full text-lg text-white hover:bg-indigo-600"
+          >
+            <FaSearch />
+          </IconButton>
+        </div>
+      </div>
+
+      {/* Actions */}
+      <div className="flex items-center gap-4 mt-3 sm:mt-0">
+        <Button
+          disabled
+          onClick={AddProperty}
+          variant="text"
+          className="rounded-full text-gray-600 cursor-not-allowed"
+        >
+          Add your Property
+        </Button>
+        <Link href="/dash/cart">
+          <IconButton
+            color={`${pathname.includes("cart") ? "indigo" : ""}`}
+            variant={`${pathname.includes("cart") ? "filled" : "text"}`}
+            className={`rounded-full ${pathname.includes("cart") ? "bg-indigo-600 text-white" : "text-gray-700 hover:text-black text-2xl"}`}
+          >
+            <FaCartPlus />
+          </IconButton>
+        </Link>
+        <Menu>
+          <MenuHandler>
+            <Button color="white" className="border-2 rounded-full hover:shadow-md text-xl flex gap-4 items-center py-1 px-2">
+              <HiMenu />
+              <Avatar size="sm" src="https://docs.material-tailwind.com/img/face-2.jpg" alt="avatar" />
+            </Button>
+          </MenuHandler>
+          <MenuList className="grid gap-2">
+            <Link href="/dash/order"><MenuItem>My Orders</MenuItem></Link>
+            <MenuItem onClick={handleLogout} className="bg-red-600 text-white text-center">Log Out</MenuItem>
+          </MenuList>
+        </Menu>
+        <AddPropertyModal open={modals} onClose={AddProperty} />
+      </div>
+    </nav>
+  );
+};

@@ -1,10 +1,11 @@
-import User from "@models/user.schema";
+
 import { connectToDB } from "@utils/database";
 import { NextResponse } from "next/server";
 import { sign } from "jsonwebtoken";
 import { hash, compare } from "bcrypt";
 import { cookies } from "next/headers";
 import { verifyJWT } from "@utils/verifyjwt";
+import User from "@models/user.schema";
 
 const generateAccessAndRefreshTokens = async (userId) => {
     try {
@@ -47,16 +48,19 @@ export const POST = async (req) => {
   if (action === "register") {
     try {
       const { email, username, password } = await req.json();
-      console.log(email);
+      console.log(email,username,password);
 
-    
+      const alreadyExists=await User.find({email:email?.toLowerCase})
+      if (alreadyExists.length>0)  return new NextResponse(JSON.stringify({message:"User Already exists",data:alreadyExists}),{status:400})
+
       const newUser = new User({ email:email?.toLowerCase(), username, password });
+      if (!newUser) return new NextResponse(JSON.stringify ({message:"Can't Create New User"}),{status:500})
       await newUser.save();
 
-      return new NextResponse(JSON.stringify({ message: "User is created",data:newUser }),{ status: 200 });
+      return new NextResponse(JSON.stringify({ message: "User is created",data:newUser }),{ status: 201 });
     } catch (error) {
       return new NextResponse("Error Registering user" + error.message, {
-        status: 500,
+        status: 500
       });
     }
   } else if (action === "login") {
