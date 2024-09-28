@@ -1,8 +1,11 @@
 
 import Cart from "@models/cart.schema";
 import Order from "@models/order.schema";
+import { connectToDB } from "@utils/database";
 import { verifyJWT } from "@utils/verifyjwt";
 import { NextResponse } from "next/server";
+
+await connectToDB();
 
 export const POST=async(req)=>{
     try {

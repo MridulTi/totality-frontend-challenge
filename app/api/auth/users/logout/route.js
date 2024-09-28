@@ -1,6 +1,9 @@
+import { connectToDB } from "@utils/database";
 import { verifyJWT } from "@utils/verifyjwt";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+
+await connectToDB();
 
 export const POST = async (req) => {
     const userId = await verifyJWT()

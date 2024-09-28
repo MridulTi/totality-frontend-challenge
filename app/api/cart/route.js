@@ -1,7 +1,10 @@
 import Cart from "@models/cart.schema";
 import Property from "@models/property.schema";
+import { connectToDB } from "@utils/database";
 import { verifyJWT } from "@utils/verifyjwt";
 import { NextResponse } from "next/server";
+
+await connectToDB();
 
 export const POST = async (req) => {
   try {
